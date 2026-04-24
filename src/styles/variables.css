@@ -1,0 +1,112 @@
+/* ============================================
+   NEXUSMESH — Design System Variables
+   ============================================ */
+
+:root {
+  /* === BACKGROUNDS === */
+  --bg-void:    #050810;
+  --bg-space:   #0a0e1a;
+  --bg-carbon:  #0f1421;
+  --bg-surface: #131929;
+  --bg-raised:  #1a2035;
+  --bg-glass:   rgba(15, 20, 33, 0.65);
+  --bg-glass-light: rgba(26, 32, 53, 0.5);
+  --bg-hover:   rgba(0, 240, 255, 0.04);
+
+  /* === ACCENT COLORS === */
+  --accent-cyan:    #00f0ff;
+  --accent-cyan-dim: rgba(0, 240, 255, 0.15);
+  --accent-cyan-glow: rgba(0, 240, 255, 0.08);
+  --accent-purple:  #8b5cf6;
+  --accent-purple-dim: rgba(139, 92, 246, 0.2);
+  --accent-magenta: #f72585;
+  --accent-blue:    #3b82f6;
+  --accent-teal:    #14b8a6;
+
+  /* === STATUS COLORS === */
+  --status-green:   #00e676;
+  --status-green-dim: rgba(0, 230, 118, 0.15);
+  --status-amber:   #ffab00;
+  --status-amber-dim: rgba(255, 171, 0, 0.15);
+  --status-red:     #ff1744;
+  --status-red-dim: rgba(255, 23, 68, 0.15);
+  --status-blue:    #40c4ff;
+
+  /* === TEXT === */
+  --text-primary:   #e8eaed;
+  --text-secondary: #9aa0a6;
+  --text-muted:     #5f6368;
+  --text-inverse:   #050810;
+  --text-cyan:      #00f0ff;
+  --text-purple:    #a78bfa;
+
+  /* === BORDERS === */
+  --border-subtle:  rgba(255, 255, 255, 0.05);
+  --border-default: rgba(255, 255, 255, 0.08);
+  --border-cyan:    rgba(0, 240, 255, 0.2);
+  --border-purple:  rgba(139, 92, 246, 0.2);
+  --border-glow:    rgba(0, 240, 255, 0.4);
+
+  /* === GLOWS / SHADOWS === */
+  --glow-cyan:   0 0 20px rgba(0, 240, 255, 0.3), 0 0 60px rgba(0, 240, 255, 0.1);
+  --glow-purple: 0 0 20px rgba(139, 92, 246, 0.3), 0 0 60px rgba(139, 92, 246, 0.1);
+  --glow-red:    0 0 20px rgba(255, 23, 68, 0.4), 0 0 60px rgba(255, 23, 68, 0.15);
+  --glow-amber:  0 0 20px rgba(255, 171, 0, 0.3), 0 0 60px rgba(255, 171, 0, 0.1);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-deep: 0 24px 64px rgba(0, 0, 0, 0.7);
+
+  /* === GLASSMORPHISM === */
+  --glass-blur:   blur(20px);
+  --glass-blur-sm: blur(10px);
+  --glass-blur-lg: blur(40px);
+
+  /* === TYPOGRAPHY === */
+  --font-sans:  'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono:  'JetBrains Mono', 'Fira Code', monospace;
+
+  --text-xs:   0.625rem;   /* 10px */
+  --text-sm:   0.75rem;    /* 12px */
+  --text-base: 0.875rem;   /* 14px */
+  --text-md:   1rem;       /* 16px */
+  --text-lg:   1.125rem;   /* 18px */
+  --text-xl:   1.25rem;    /* 20px */
+  --text-2xl:  1.5rem;     /* 24px */
+  --text-3xl:  1.875rem;   /* 30px */
+  --text-4xl:  2.25rem;    /* 36px */
+  --text-5xl:  3rem;       /* 48px */
+
+  /* === SPACING === */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+
+  /* === BORDER RADIUS === */
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  14px;
+  --radius-xl:  18px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* === TRANSITIONS === */
+  --duration-fast:   150ms;
+  --duration-base:   250ms;
+  --duration-slow:   400ms;
+  --duration-slower: 600ms;
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:    cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* === LAYOUT === */
+  --sidebar-width: 260px;
+  --sidebar-collapsed: 72px;
+  --header-height: 64px;
+}

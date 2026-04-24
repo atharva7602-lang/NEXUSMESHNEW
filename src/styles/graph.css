@@ -1,0 +1,231 @@
+/* ============================================
+   NEXUSMESH — Network Graph Styles
+   ============================================ */
+
+.graph-container {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0,240,255,0.02) 0%, transparent 70%),
+              var(--bg-carbon);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-card);
+}
+
+.graph-canvas {
+  display: block;
+  width: 100%;
+}
+
+.graph-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+}
+
+/* === GRAPH CONTROLS === */
+.graph-controls {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  z-index: 10;
+}
+
+.graph-ctrl-btn {
+  width: 32px; height: 32px;
+  display: flex;
+  align-items: center; justify-content: center;
+  background: var(--bg-glass);
+  backdrop-filter: var(--glass-blur-sm);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 14px;
+  transition: all var(--duration-base);
+}
+.graph-ctrl-btn:hover {
+  border-color: var(--border-cyan);
+  color: var(--accent-cyan);
+  box-shadow: var(--glow-cyan);
+}
+
+/* === GRAPH LEGEND === */
+.graph-legend {
+  position: absolute;
+  bottom: var(--space-4);
+  left: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: var(--bg-glass);
+  backdrop-filter: var(--glass-blur-sm);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  z-index: 10;
+}
+
+.legend-title {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.legend-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legend-line {
+  width: 16px; height: 2px;
+  flex-shrink: 0;
+}
+
+/* === NODE TOOLTIP === */
+.node-tooltip {
+  position: absolute;
+  z-index: 200;
+  pointer-events: none;
+  min-width: 200px;
+  max-width: 280px;
+  background: var(--bg-raised);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-cyan);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-deep), var(--glow-cyan);
+  animation: fadeIn 150ms ease;
+  display: none;
+}
+
+.node-tooltip.visible { display: block; }
+
+.tooltip-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.tooltip-icon { font-size: 20px; }
+
+.tooltip-name {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.tooltip-location {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.tooltip-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.tooltip-metric-label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.tooltip-metric-value {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+/* === DISRUPTION RIPPLE (SVG overlay) === */
+.disruption-ripple {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid var(--status-red);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: ripple 1.5s ease-out forwards;
+}
+
+/* === GRAPH NODE INFO PANEL === */
+.node-detail-panel {
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-4);
+  width: 280px;
+  background: var(--bg-glass);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-cyan);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-card), var(--glow-cyan);
+  z-index: 20;
+  animation: slideInRight var(--duration-base) var(--ease-out-expo);
+  display: none;
+}
+.node-detail-panel.visible { display: block; }
+
+/* === GRAPH STATUS BAR === */
+.graph-status-bar {
+  position: absolute;
+  top: var(--space-4);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--bg-glass);
+  backdrop-filter: var(--glass-blur-sm);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  padding: var(--space-2) var(--space-4);
+  z-index: 10;
+}
+
+.graph-stat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.graph-stat-value {
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.graph-sep {
+  width: 1px;
+  height: 12px;
+  background: var(--border-subtle);
+}
+
+/* === PROPAGATION PATH === */
+.propagation-path-line {
+  stroke: var(--status-red);
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+  animation: dash-flow 0.5s linear infinite;
+  filter: drop-shadow(0 0 6px var(--status-red));
+}
