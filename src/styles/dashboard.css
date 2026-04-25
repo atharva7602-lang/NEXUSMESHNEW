@@ -6,18 +6,12 @@
 #app { position: relative; z-index: 1; }
 
 .dashboard-layout {
-  display: grid;
-  grid-template-columns: var(--sidebar-width) 1fr;
-  grid-template-rows: var(--header-height) 1fr;
-  grid-template-areas: "sidebar header" "sidebar main";
+  display: block;
   min-height: 100vh;
-  transition: grid-template-columns var(--duration-slow) var(--ease-out-expo);
 }
-.dashboard-layout.sidebar-collapsed { grid-template-columns: var(--sidebar-collapsed) 1fr; }
 
 /* === SIDEBAR === */
 .sidebar {
-  grid-area: sidebar;
   position: fixed;
   top: 0; left: 0;
   width: var(--sidebar-width);
@@ -187,7 +181,6 @@
 
 /* === HEADER === */
 .header {
-  grid-area: header;
   position: fixed;
   top: 0;
   left: var(--sidebar-width);
@@ -274,7 +267,6 @@
 
 /* === MAIN CONTENT === */
 .main-content {
-  grid-area: main;
   margin-left: var(--sidebar-width);
   margin-top: var(--header-height);
   padding: var(--space-6);
