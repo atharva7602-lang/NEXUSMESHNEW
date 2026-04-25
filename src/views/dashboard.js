@@ -1,5 +1,6 @@
 import { telemetrySimulator } from '../data/telemetrySimulator.js';
 import { DISRUPTION_SCENARIO } from '../data/supplyChainGraph.js';
+import { createGeoMap } from '../components/GeoMap.js';
 
 export function renderDashboard(container, app) {
   const risk = app.globalRisk;
@@ -35,18 +36,16 @@ export function renderDashboard(container, app) {
 
   <!-- MAIN GRID -->
   <div class="grid-main">
-    <!-- NETWORK MINI MAP -->
+    <!-- LEFT: GEOGRAPHIC MAP -->
     <div class="glass-card panel-card">
       <div class="panel-card-header">
         <div>
-          <div class="section-title">🌐 Supply Chain Network</div>
-          <div style="font-size:12px;color:var(--text-muted);margin-top:2px">25 nodes · 38 edges · Live GNN risk scoring</div>
+          <div class="section-title">🗺️ Live Supply Chain Map</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:2px">25 nodes · India states · ${app.activeScenario ? '🚨 Disruption active — click map markers' : 'Live GNN risk scoring'}</div>
         </div>
         <button class="btn btn-ghost" onclick="document.querySelector('[data-view=network]').click()">Full View →</button>
       </div>
-      <div id="mini-network" style="height:340px;border-radius:12px;overflow:hidden;background:radial-gradient(ellipse 80% 80% at 50% 50%,rgba(0,240,255,0.03) 0%,transparent 70%);display:flex;align-items:center;justify-content:center;border:1px solid var(--border-subtle)">
-        <canvas id="mini-canvas" style="width:100%;height:100%"></canvas>
-      </div>
+      <div id="dashboard-geo-map" style="height:340px;border-radius:12px;overflow:hidden;border:1px solid var(--border-subtle)"></div>
     </div>
 
     <!-- RIGHT COLUMN -->
@@ -102,7 +101,11 @@ export function renderDashboard(container, app) {
   </div>
 </div>`;
 
-  drawMiniNetwork(app);
+  // Init compact geographic map
+  const dashMap = createGeoMap('dashboard-geo-map', app, { compact: true });
+  app._mapInstances = app._mapInstances || {};
+  app._mapInstances['dashboard'] = dashMap;
+  if (app.activeScenario) dashMap.nexusUpdate(app.activeScenario);
 }
 
 function metricCard(icon, label, value, color, trend, trendDir, gradient) {

@@ -1,44 +1,50 @@
 import * as d3 from 'd3';
-import { NODES, EDGES, getRiskColor, DISRUPTION_SCENARIO } from '../data/supplyChainGraph.js';
+import { NODES, EDGES, getRiskColor } from '../data/supplyChainGraph.js';
+import { createGeoMap } from '../components/GeoMap.js';
 
 export function renderNetwork(container, app) {
+  const scenario = app.activeScenario;
   container.innerHTML = `
 <div class="animate-fade-in">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-    <div>
-      <h1 style="font-size:20px;font-weight:800;letter-spacing:-.02em">Supply Chain Network Graph</h1>
-      <div style="font-size:12px;color:var(--text-muted);margin-top:2px">GNN risk propagation · Real-time edge health · Click nodes to inspect</div>
+  <!-- GEOGRAPHIC MAP -->
+  <div class="glass-card" style="margin-bottom:16px;overflow:hidden;border-radius:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border-subtle)">
+      <div>
+        <div style="font-weight:700;font-size:14px">🗺️ Live Supply Chain Map</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">India states + global nodes · Click markers for details · ${scenario ? '🚨 Disruption active' : 'All nodes nominal'}</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        ${scenario ? `<span style="background:rgba(255,23,68,0.15);color:#ff1744;border:1px solid rgba(255,23,68,0.3);padding:4px 12px;border-radius:20px;font-size:10px;font-weight:700">${scenario.region} · ${scenario.type.toUpperCase()}</span>` : ''}
+        <button class="btn btn-ghost" id="reset-graph">↺ Reset View</button>
+      </div>
     </div>
-    <div style="display:flex;gap:8px">
-      ${app.disruptionActive ? `<button class="btn btn-danger" id="show-propagation">⚡ Show Propagation</button>` : ''}
-      <button class="btn btn-ghost" id="reset-graph">↺ Reset</button>
-    </div>
+    <div id="nexus-geo-map" style="height:480px;width:100%"></div>
   </div>
 
   <div style="display:grid;grid-template-columns:1fr 300px;gap:16px">
-    <!-- GRAPH -->
-    <div class="graph-container" style="height:600px;position:relative">
-      <svg id="network-svg" style="width:100%;height:100%"></svg>
-      <!-- Legend -->
-      <div class="graph-legend">
-        <div class="legend-title">Node Types</div>
-        ${['⛏️ Raw Material','🏭 Manufacturer','🏗️ Assembly','📦 Distribution','🏪 Retail'].map(l=>`<div class="legend-item"><span>${l}</span></div>`).join('')}
-        <div style="height:1px;background:var(--border-subtle);margin:6px 0"></div>
-        <div class="legend-title">Risk Level</div>
-        ${[['#00e676','Low (<30)'],['#ffab00','Medium (30-65)'],['#ff1744','High (>65)']].map(([c,l])=>`<div class="legend-item"><div class="legend-dot" style="background:${c}"></div>${l}</div>`).join('')}
-        ${app.disruptionActive ? `<div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div>Shadow Net</div>` : ''}
+    <!-- D3 FORCE GRAPH -->
+    <div class="glass-card" style="padding:14px">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:12px">⚡ GNN Force Graph</div>
+      <div class="graph-container" style="height:440px;position:relative">
+        <svg id="network-svg" style="width:100%;height:100%"></svg>
+        <div class="graph-legend">
+          <div class="legend-title">Node Types</div>
+          ${['⛏️ Raw Material','🏭 Manufacturer','🏗️ Assembly','📦 Distribution','🏪 Retail'].map(l=>`<div class="legend-item"><span>${l}</span></div>`).join('')}
+          <div style="height:1px;background:var(--border-subtle);margin:6px 0"></div>
+          <div class="legend-title">Risk Level</div>
+          ${[['#00e676','Low (<30)'],['#ffab00','Medium (30-65)'],['#ff1744','High (>65)']].map(([c,l])=>`<div class="legend-item"><div class="legend-dot" style="background:${c}"></div>${l}</div>`).join('')}
+        </div>
+        <div class="graph-status-bar">
+          <div class="graph-stat"><span>Nodes</span><span class="graph-stat-value">25</span></div>
+          <div class="graph-sep"></div>
+          <div class="graph-stat"><span>Edges</span><span class="graph-stat-value">38</span></div>
+          <div class="graph-sep"></div>
+          <div class="graph-stat"><span>Risk</span><span class="graph-stat-value" style="color:${app.globalRisk>65?'var(--status-red)':app.globalRisk>40?'var(--status-amber)':'var(--status-green)'}">${app.globalRisk}</span></div>
+          <div class="graph-sep"></div>
+          <div class="graph-stat"><span>Affected</span><span class="graph-stat-value">${app.gnnResults?.affectedNodeCount || 0}</span></div>
+        </div>
+        <div id="node-tooltip" class="node-tooltip"></div>
       </div>
-      <!-- Status bar -->
-      <div class="graph-status-bar">
-        <div class="graph-stat"><span>Nodes</span><span class="graph-stat-value">25</span></div>
-        <div class="graph-sep"></div>
-        <div class="graph-stat"><span>Edges</span><span class="graph-stat-value">38</span></div>
-        <div class="graph-sep"></div>
-        <div class="graph-stat"><span>Risk</span><span class="graph-stat-value" style="color:${app.globalRisk>65?'var(--status-red)':app.globalRisk>40?'var(--status-amber)':'var(--status-green)'}">${app.globalRisk}</span></div>
-        <div class="graph-sep"></div>
-        <div class="graph-stat"><span>Affected</span><span class="graph-stat-value">${app.gnnResults?.affectedNodeCount || 0}</span></div>
-      </div>
-      <div id="node-tooltip" class="node-tooltip"></div>
     </div>
 
     <!-- SIDE PANEL -->
@@ -48,41 +54,46 @@ export function renderNetwork(container, app) {
         <div style="font-size:13px;color:var(--text-muted);text-align:center;padding:20px 0">Click any node to inspect</div>
       </div>
 
-      ${app.disruptionActive && app.gnnResults ? `
+      ${app.disruptionActive && app.gnnResults && scenario ? `
       <div class="glass-card" style="padding:16px">
-        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--status-red);margin-bottom:12px">⚡ PROPAGATION ANALYSIS</div>
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--status-red);margin-bottom:12px">⚡ PROPAGATION</div>
+        <div style="font-size:11px;color:var(--text-secondary);margin-bottom:10px">${scenario.headline}</div>
         <div style="display:flex;flex-direction:column;gap:6px">
-          ${DISRUPTION_SCENARIO.propagationPath.map((id,i)=>{
+          ${scenario.propagationPath.map((id)=>{
             const n = NODES.find(x=>x.id===id);
             const risk = app.gnnResults.riskScores[id] || 0;
             return `<div style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--bg-surface);border-radius:8px;border-left:2px solid ${getRiskColor(risk*100)}">
-              <span style="font-size:16px">${n?.icon||'📦'}</span>
+              <span style="font-size:14px">${n?.icon||'📦'}</span>
               <div style="flex:1">
-                <div style="font-size:12px;font-weight:600">${n?.name||id}</div>
-                <div style="font-size:10px;color:var(--text-muted)">${n?.location||''}</div>
+                <div style="font-size:11px;font-weight:600">${n?.name||id}</div>
+                <div style="font-size:9px;color:var(--text-muted)">${n?.location||''}</div>
               </div>
-              <div style="font-size:11px;font-weight:700;font-family:var(--font-mono);color:${getRiskColor(risk*100)}">${Math.round(risk*100)}%</div>
+              <div style="font-size:10px;font-weight:700;font-family:var(--font-mono);color:${getRiskColor(risk*100)}">${Math.round(risk*100)}%</div>
             </div>`;
-          }).join('<div style="width:1px;height:6px;background:var(--status-red);margin:0 auto;opacity:.4"></div>')}
-        </div>
-        <div style="margin-top:12px;padding:10px;background:rgba(255,23,68,.08);border-radius:8px;border:1px solid rgba(255,23,68,.2)">
-          <div style="font-size:11px;color:var(--status-red);font-weight:600">Propagation Velocity</div>
-          <div style="font-size:11px;color:var(--text-secondary);margin-top:4px">${app.gnnResults.propagationVelocity.nodesAffectedPerHour} nodes/hr · Est. full spread: ${app.gnnResults.propagationVelocity.estimatedFullPropagation}</div>
+          }).join('<div style="width:1px;height:5px;background:var(--status-red);margin:0 auto;opacity:.3"></div>')}
         </div>
       </div>` : ''}
 
       <div class="glass-card" style="padding:16px">
         <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:12px">SIGNAL FUSION</div>
-        ${signalBar('🛰️ SAR Signal', app.disruptionActive ? 85 : 12, 'var(--accent-cyan)')}
-        ${signalBar('📰 Sentiment', app.disruptionActive ? 72 : 18, 'var(--accent-purple)')}
-        ${signalBar('📡 Telemetry', app.disruptionActive ? 91 : 8, 'var(--status-amber)')}
+        ${signalBar('🛰️ SAR Signal', scenario ? Math.round(scenario.signals.sarSignal*100) : 12, 'var(--accent-cyan)')}
+        ${signalBar('📰 Sentiment', scenario ? Math.round(scenario.signals.sentiment*100) : 18, 'var(--accent-purple)')}
+        ${signalBar('📡 Telemetry', scenario ? Math.round(scenario.signals.telemetry*100) : 8, 'var(--status-amber)')}
       </div>
     </div>
   </div>
 </div>`;
 
+  // Init Leaflet map
+  const mapInstance = createGeoMap('nexus-geo-map', app);
+  app._mapInstances['network'] = mapInstance;
+
+  // Init D3 graph
   initD3Graph(app);
-  document.getElementById('reset-graph')?.addEventListener('click', () => initD3Graph(app));
+  document.getElementById('reset-graph')?.addEventListener('click', () => {
+    if (mapInstance) mapInstance.setView([22, 82], 4);
+    initD3Graph(app);
+  });
 }
 
 function signalBar(label, val, color) {
@@ -170,9 +181,9 @@ function initD3Graph(app) {
       if (d.type==='alternative') return '#3b82f6';
       return getRiskColor(d.risk);
     })
-    .attr('filter', d => d.id===DISRUPTION_SCENARIO.origin && app.disruptionActive ? 'url(#glow-red)' : null)
-    .attr('stroke', d => d.id===DISRUPTION_SCENARIO.origin && app.disruptionActive ? '#ff1744' : 'rgba(255,255,255,.1)')
-    .attr('stroke-width', d => d.id===DISRUPTION_SCENARIO.origin ? 2.5 : 1);
+    .attr('filter', d => d.id === (app.activeScenario?.origin) && app.disruptionActive ? 'url(#glow-red)' : null)
+    .attr('stroke', d => d.id === (app.activeScenario?.origin) && app.disruptionActive ? '#ff1744' : 'rgba(255,255,255,.1)')
+    .attr('stroke-width', d => d.id === (app.activeScenario?.origin) ? 2.5 : 1);
 
   // Icon label
   node.append('text').text(d => d.icon||'●')
@@ -214,8 +225,8 @@ function initD3Graph(app) {
   .on('click', (e, d) => showNodeDetail(d, app));
 
   // Disruption pulse
-  if (app.disruptionActive) {
-    const origin = nodes.find(n => n.id === DISRUPTION_SCENARIO.origin);
+  if (app.disruptionActive && app.activeScenario) {
+    const origin = nodes.find(n => n.id === app.activeScenario.origin);
     if (origin) {
       setInterval(() => {
         if (!origin.x) return;

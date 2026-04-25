@@ -152,6 +152,24 @@ ul, ol { list-style: none; }
   transform: translateY(-1px);
 }
 
+.btn-success {
+  background: linear-gradient(135deg, rgba(0,230,118,0.2), rgba(0,230,118,0.06));
+  border: 1px solid #00e676;
+  color: #00e676;
+  box-shadow: 0 0 20px rgba(0,230,118,0.15);
+  font-weight: 800;
+}
+.btn-success:hover {
+  background: linear-gradient(135deg, rgba(0,230,118,0.32), rgba(0,230,118,0.14));
+  box-shadow: 0 0 30px rgba(0,230,118,0.35);
+  transform: translateY(-1px);
+}
+
+.shadow-net-activate-banner.resolved-state {
+  background: linear-gradient(135deg, rgba(0,230,118,0.12), rgba(0,230,118,0.04)) !important;
+  border-color: rgba(0,230,118,0.4) !important;
+}
+
 .btn-lg {
   padding: var(--space-3) var(--space-6);
   font-size: var(--text-base);
